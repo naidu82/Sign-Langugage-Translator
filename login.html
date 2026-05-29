@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sign Language Translator - Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a 0%, #1a2d4a 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background: rgba(17, 34, 68, 0.8);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 12px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .login-header p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            background: rgba(30, 58, 138, 0.4);
+            color: white;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: rgba(30, 58, 138, 0.6);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            color: #fca5a5;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+        .login-btn:active {
+            transform: translateY(0);
+        }
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .demo-credentials {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 8px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+        }
+        .demo-credentials strong {
+            color: rgba(255, 255, 255, 0.9);
+        }
+        .form-toggle {
+            display: flex;
+            gap: 0;
+            margin-bottom: 24px;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.2);
+        }
+        .form-toggle button {
+            flex: 1;
+            padding: 12px;
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        .form-toggle button.active {
+            color: #3b82f6;
+            border-bottom-color: #3b82f6;
+        }
+        .form-toggle button:hover {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        .toggle-link {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .toggle-link button {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+            padding: 0;
+            margin-left: 4px;
+        }
+        .toggle-link button:hover {
+            color: #60a5fa;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>Sign Language Translator</h1>
+            <p>Gesture Recognition System</p>
+        </div>
+        <div class="form-toggle">
+            <button class="active" onclick="switchForm('login')">Login</button>
+            <button onclick="switchForm('register')">Register</button>
+        </div>
+        <div class="error-message" id="errorMessage"></div>
+        <form id="loginForm" class="form-section active" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="loginUsername">Username</label>
+                <input 
+                    type="text" 
+                    id="loginUsername" 
+                    name="username" 
+                    placeholder="Enter username" 
+                    required
+                    autocomplete="username"
+                >
+            </div>
+            <div class="form-group">
+                <label for="loginPassword">Password</label>
+                <input 
+                    type="password" 
+                    id="loginPassword" 
+                    name="password" 
+                    placeholder="Enter password" 
+                    required
+                    autocomplete="current-password"
+                >
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">
+                Login
+            </button>
+        </form>
+        <form id="registerForm" class="form-section" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label for="regUsername">Username</label>
+                <input 
+                    type="text" 
+                    id="regUsername" 
+                    name="username" 
+                    placeholder="Enter new username" 
+                    required
+                    autocomplete="username"
+                    minlength="3"
+                >
+            </div>
+            <div class="form-group">
+                <label for="regPassword">Password</label>
+                <input 
+                    type="password" 
+                    id="regPassword" 
+                    name="password" 
+                    placeholder="Enter password" 
+                    required
+                    autocomplete="new-password"
+                    minlength="6"
+                >
+            </div>
+            <div class="form-group">
+                <label for="regConfirmPassword">Confirm Password</label>
+                <input 
+                    type="password" 
+                    id="regConfirmPassword" 
+                    name="confirmPassword" 
+                    placeholder="Confirm password" 
+                    required
+                    autocomplete="new-password"
+                    minlength="6"
+                >
+            </div>
+            <button type="submit" class="login-btn" id="registerBtn">
+                Register
+            </button>
+        </form>
+    </div>
+    <script>
+        let currentForm = 'login';
+        function switchForm(formName) {
+            currentForm = formName;
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+            document.querySelectorAll('.form-toggle button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            document.querySelectorAll('.form-section').forEach(form => {
+                form.classList.remove('active');
+            });
+            if (formName === 'login') {
+                document.getElementById('loginForm').classList.add('active');
+                document.getElementById('loginUsername').focus();
+            } else {
+                document.getElementById('registerForm').classList.add('active');
+                document.getElementById('regUsername').focus();
+            }
+        }
+        async function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';            
+            loginBtn.disabled = true;
+            const originalText = loginBtn.innerHTML;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span>Logging in...';
+            try {
+                const response = await fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
+                    window.location.href = '/';
+                } else {
+                    errorMessage.textContent = data.message || 'Login failed. Please check your credentials.';
+                    errorMessage.classList.add('show');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = originalText;
+                    document.getElementById('loginPassword').value = '';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = originalText;
+            }
+        }
+        async function handleRegister(event) {
+            event.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const registerBtn = document.getElementById('registerBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match.';
+                errorMessage.classList.add('show');
+                return;
+            }
+            if (username.length < 3) {
+                errorMessage.textContent = 'Username must be at least 3 characters.';
+                errorMessage.classList.add('show');
+                return;
+            }
+            if (password.length < 6) {
+                errorMessage.textContent = 'Password must be at least 6 characters.';
+                errorMessage.classList.add('show');
+                return;
+            }
+            errorMessage.classList.remove('show');
+            errorMessage.textContent = '';
+            registerBtn.disabled = true;
+            const originalText = registerBtn.innerHTML;
+            registerBtn.innerHTML = '<span class="loading-spinner"></span>Registering...';
+            try {
+                const response = await fetch('/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+                const data = await response.json();
+                if (response.ok && data.status === 'success') {
+                    errorMessage.textContent = 'Registration successful! Please login.';
+                    errorMessage.style.background = 'rgba(34, 197, 94, 0.1)';
+                    errorMessage.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+                    errorMessage.style.color = '#86efac';
+                    errorMessage.classList.add('show');
+                    setTimeout(() => {
+                        document.getElementById('registerForm').reset();
+                        document.getElementById('loginForm').classList.add('active');
+                        document.getElementById('registerForm').classList.remove('active');
+                        document.querySelectorAll('.form-toggle button')[0].classList.add('active');
+                        document.querySelectorAll('.form-toggle button')[1].classList.remove('active');
+                        document.getElementById('loginUsername').focus();
+                        currentForm = 'login';
+                        errorMessage.style.background = 'rgba(239, 68, 68, 0.1)';
+                        errorMessage.style.borderColor = 'rgba(239, 68, 68, 0.5)';
+                        errorMessage.style.color = '#fca5a5';
+                        errorMessage.classList.remove('show');
+                        errorMessage.textContent = '';
+                    }, 2000);
+                } else {
+                    errorMessage.textContent = data.message || 'Registration failed. Please try again.';
+                    errorMessage.classList.add('show');
+                    registerBtn.disabled = false;
+                    registerBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred. Please try again.';
+                errorMessage.classList.add('show');
+                registerBtn.disabled = false;
+                registerBtn.innerHTML = originalText;
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loginUsername').focus();
+        });
+    </script>
+</body>
+</html>

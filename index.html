@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Sign Language Translator</title>
+<style>
+* {
+    box-sizing: border-box;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100vh;
+    background: linear-gradient(135deg, #0f172a 0%, #1a2d4a 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    color: white;
+    overflow: hidden;
+}
+body {
+    display: flex;
+    flex-direction: column;
+}
+h1 {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.lang-selector {
+    text-align: center;
+    padding: 2px 0;
+    flex-shrink: 0;
+}
+.lang-selector button {
+    width: 85px;
+    margin: 0 6px;
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+.lang-selector button.on {
+    background: #4ade80;
+    color: black;
+}
+.lang-selector button.off {
+    background: #6b7280;
+    color: white;
+}
+.lang-selector button:hover {
+    transform: translateY(-1px);
+}
+.top {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    flex: 1;
+    padding: 10px;
+    flex-shrink: 0;
+    min-height: 0;
+}
+.camera {
+    position: relative;
+}
+.camera img {
+    width: 680px;
+    height: 380px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #3b82f6;
+    display: block;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+.output-box {
+    width: 260px;
+    height: 383px;
+    background: rgba(30, 41, 59, 0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #3b82f6;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+.output-box > div:nth-child(1) {
+    font-size: 16px;
+    opacity: 0.6;
+    text-align: center;
+    margin-bottom: 8px;
+}
+.output-text {
+    font-size: 100px;
+    text-align: center;
+    color: #4ade80;
+    font-weight: 700;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    margin-top: auto;
+}
+.controls button {
+    flex: 1;
+    height: 38px;
+    min-width: 95px;
+    text-align: center;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+button {
+    transition: all 0.2s ease;
+}
+.off {
+    background: #ef4444;
+    color: white;
+}
+.on {
+    background: #4ade80;
+    color: black;
+}
+button:hover {
+    transform: translateY(-1px);
+}
+.bottom {
+    width: 100%;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    text-align: center;
+    flex-shrink: 0;
+    border-top: 1px solid rgba(59, 130, 246, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    margin-top: auto;
+}
+.bottom h3 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0.8;
+}
+input {
+    width: 55%;
+    margin: 0 auto;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #3b82f6;
+    font-size: 13px;
+    background: rgba(15, 23, 42, 0.9);
+    color: white;
+    transition: all 0.2s ease;
+}
+input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
+input:focus {
+    outline: none;
+    border-color: #60a5fa;
+    background: rgba(15, 23, 42, 0.95);
+}
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+.action-buttons button {
+    background: #3b82f6;
+    color: white;
+    padding: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    width: 100px;
+}
+.action-buttons button:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+#messageBox {
+    color: #60a5fa;
+    min-height: 14px;
+    font-size: 11px;
+    opacity: 0.8;
+}
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background: rgba(15, 23, 42, 0.9);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    flex-shrink: 0;
+    gap: 16px;
+}
+
+.user-header h1 {
+    flex: 1;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+}
+.user-info .user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+}
+.user-info .username {
+    font-weight: 600;
+    color: #60a5fa;
+}
+.logout-btn {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.5);
+    color: #fca5a5;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+}
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.7);
+    transform: translateY(-1px);
+}
+.exit-btn {
+    background: #ef4444;
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+}
+.exit-btn:hover {
+    background: #dc2626;
+    transform: translateY(-1px);
+}
+.button-group {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+</style>
+</head>
+<body>
+<div class="user-header">
+    <div class="user-info">
+        <div class="user-avatar" id="userAvatar"></div>
+        <span>Welcome, <span class="username" id="usernamDisplay">User</span></span>
+    </div>
+    <h1>Sign Language Translator</h1>
+    <div class="button-group">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="exit-btn" onclick="exitApp()">Exit</button>
+    </div>
+</div>
+<div class="lang-selector">
+    <button id="langBtnASL" class="on" onclick="switchLanguage('ASL')">ASL</button>
+    <button id="langBtnISL" class="off" onclick="switchLanguage('ISL')">ISL</button>
+</div>
+<div class="top">
+    <!-- CAMERA -->
+    <div class="camera">
+        <img src="/video">
+    </div>
+    <!-- OUTPUT -->
+    <div class="output-box">
+        <div>Output</div>
+        <div id="output" class="output-text">-</div>
+        <div class="controls">
+            <button id="predBtn" class="off" onclick="togglePrediction()">Prediction OFF</button>
+            <button id="audioBtn" class="off" onclick="toggleAudio()">Audio OFF</button>
+        </div>
+    </div>
+</div>
+<div class="bottom">
+    <h3 id="langTitle">ASL - Custom Gesture Addition</h3>
+    <input id="label" placeholder="Enter New Sign Name">
+    <div id="messageBox"></div>
+    <div class="action-buttons">
+        <button onclick="capture()">Capture</button>
+        <button onclick="train()">Train</button>
+        <button onclick="clearInput()">Clear</button>
+</div>
+</div>
+<script>
+const PAGE_USERNAME = "{{ username }}";
+let capturing = false;
+let audioEnabled = false;
+let lastWord = "";
+let lastTime = 0;
+let currentLanguage = "ASL";
+function initializeUserDisplay() {
+    const username = PAGE_USERNAME.trim() || document.getElementById('usernamDisplay')?.textContent || 'User';
+        document.getElementById('usernamDisplay').textContent = username;
+        const firstLetter = username.charAt(0).toUpperCase();
+    document.getElementById('userAvatar').textContent = firstLetter;
+}
+function logout() {
+    if (confirm('Are you sure you want to logout?')) {
+        window.location.href = '/logout';
+    }
+}
+function exitApp() {
+    if (confirm('Are you sure you want to exit the application?')) {
+        fetch('/shutdown').then(() => {
+            window.location.href = '/login';
+        }).catch(err => {
+            console.log('Server shutdown initiated');
+            setTimeout(() => {
+                window.location.href = '/login';
+            }, 1000);
+        });
+    }
+}
+function showMessage(msg){
+    document.getElementById("messageBox").innerText = msg;
+}
+async function switchLanguage(lang){
+    showMessage("Switching to " + lang + "...");
+    try {
+        let res = await fetch(`/switch_language/${lang}`);
+        let data = await res.json();
+        if(data.status === "success"){
+            currentLanguage = lang;
+            updateLanguageButtons();
+            document.getElementById("langTitle").innerText = lang + " - Custom Gesture Addition";           
+            let predBtn = document.getElementById("predBtn");
+            predBtn.innerText = "Prediction OFF";
+            predBtn.className = "off";            
+            audioEnabled = false;
+            let audioBtn = document.getElementById("audioBtn");
+            audioBtn.innerText = "Audio OFF";
+            audioBtn.className = "off";            
+            showMessage(lang + " model loaded");
+        } else {
+            showMessage("Error: Failed to load " + lang + " model");
+        }
+    } catch(e) {
+        showMessage("Error switching language: " + e);
+    }
+}
+function updateLanguageButtons(){
+    let aslBtn = document.getElementById("langBtnASL");
+    let islBtn = document.getElementById("langBtnISL");
+    if(currentLanguage === "ASL"){
+        aslBtn.className = "on";
+        islBtn.className = "off";
+    } else {
+        aslBtn.className = "off";
+        islBtn.className = "on";
+    }
+}
+async function capture(){
+    let label = document.getElementById("label").value;
+    if(!label){
+        showMessage("⚠ Enter sign name");
+        return;
+    }
+    if(!capturing){
+        await fetch('/start_capture', {
+            method: 'POST',
+            body: new URLSearchParams({label})
+        });
+        capturing = true;
+    }
+    while(capturing){
+        let res = await fetch('/capture_frame', {method:'POST'});
+        let data = await res.json();
+        if(data.status === "capturing"){
+            showMessage("Captured: " + data.count + " / 300");
+        }
+        if(data.status === "done"){
+            showMessage("Capture completed for " + currentLanguage);
+            capturing = false;
+        }
+        await new Promise(r => setTimeout(r, 180));
+    }
+}
+async function train(){
+    showMessage("Training " + currentLanguage + " model...");
+    let res = await fetch('/train');
+    let data = await res.json();
+    showMessage(currentLanguage + " model trained and loaded");
+}
+function clearInput(){
+    document.getElementById("label").value = "";
+    document.getElementById("messageBox").innerText = "";
+}
+function togglePrediction(){
+    fetch('/toggle_prediction')
+    .then(r => r.json())
+    .then(d => {
+        let btn = document.getElementById("predBtn");
+        btn.innerText = d.status ? "Prediction ON" : "Prediction OFF";
+        btn.className = d.status ? "on" : "off";
+    });
+}
+function toggleAudio(){
+    audioEnabled = !audioEnabled;
+    let btn = document.getElementById("audioBtn");
+    btn.innerText = audioEnabled ? "Audio ON" : "Audio OFF";
+    btn.className = audioEnabled ? "on" : "off";
+}
+setInterval(() => {
+    fetch('/get_word')
+    .then(r => r.json())
+    .then(d => {
+        let word = d.word || "-";
+        document.getElementById("output").innerText = word;
+        let now = Date.now();
+        if(audioEnabled && word !== "-" && word !== lastWord && (now - lastTime > 1200)){
+            new Audio('/speak/' + word).play();
+            lastWord = word;
+            lastTime = now;
+        }
+    });
+}, 500);
+window.onload = () => {
+    fetch('/reset');
+    updateLanguageButtons();
+    initializeUserDisplay();
+        audioEnabled = false;
+    let audioBtn = document.getElementById("audioBtn");
+    audioBtn.innerText = "Audio OFF";
+    audioBtn.className = "off";
+};
+</script>
+</body>
+</html>
